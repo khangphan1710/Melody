@@ -1,6 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: '.env');
+
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    publishableKey: dotenv.env['SUPABASE_PUBLISHABLE_KEY']!,
+  );
+
+  final supabase = Supabase.instance.client;
+
+  // 3. TẠM THỜI, chỉ để kiểm tra, sẽ xóa sau
+  final data = await  supabase
+      .from('songs')
+      .select('title')
+      .limit(3);
+  debugPrint('Kết quả truy vấn: $data');
+
   runApp(const MyApp());
 }
 
